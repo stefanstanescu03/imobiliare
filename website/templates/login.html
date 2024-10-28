@@ -1,0 +1,40 @@
+{% extends 'base.html' %} {% block head %} {% endblock %} {% block body %}
+<form
+  method="POST"
+  class="flex flex-col w-full h-full text-gray-800 text-lg gap-1 py-12 items-center content-center"
+>
+  <div class="flex flex-col w-1/4">
+    <label for="email">Email</label>
+    <input
+      class="border outline-none rounded-md border-gray-800 w-full p-1"
+      type="text"
+      name="email"
+    />
+  </div>
+  <div class="flex flex-col w-1/4">
+    <label for="password">Parola</label>
+    <input
+      class="border outline-none rounded-md border-gray-800 w-full p-1"
+      type="password"
+      name="password"
+    />
+  </div>
+  <div class="flex flex-col w-1/4">
+    <button
+      type="submit"
+      class="border rounded-md w-full p-1 bg-red-800 text-white duration-300 hover:bg-red-700"
+    >
+      Intra in cont
+    </button>
+  </div>
+  {% if incorrect_password == True %}
+  <div>
+    <p class="text-gray-800 text-base">Parola introdusa este gresita</p>
+  </div>
+  {% endif %} {% if incorrect_email == True %}
+  <div>
+    <p class="text-gray-800 text-base">Email-ul nu este inregistrat</p>
+  </div>
+  {% endif %}
+</form>
+{% endblock %}

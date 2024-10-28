@@ -6,21 +6,17 @@ from dotenv import load_dotenv
 load_dotenv()
 
 
-def connect_to_database():
-    hostname = os.getenv('DBHOSTNAME')
-    user = os.getenv('DBUSER')
-    password = os.getenv('PASSWORD')
-    database = os.getenv('DATABASE')
+hostname = os.getenv('DBHOSTNAME')
+user = os.getenv('DBUSER')
+password = os.getenv('PASSWORD')
+database = os.getenv('DATABASE')
 
-    print(hostname)
-
-    db = pymysql.connections.Connection(
-        host=hostname,
-        user=user,
-        password=password,
-        database=database
-    )
-    return db
+db = pymysql.connections.Connection(
+    host=hostname,
+    user=user,
+    password=password,
+    database=database
+)
 
 
 def create_app():

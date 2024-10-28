@@ -1,0 +1,73 @@
+{% extends 'base.html' %} {% block head %} {% endblock %} {% block body %}
+<form
+  method="POST"
+  class="flex flex-col w-full h-full text-gray-800 text-lg gap-1 py-12 items-center content-center"
+>
+  <div class="flex flex-col w-1/4">
+    <label for="nume">Nume*</label>
+    <input
+      class="border outline-none rounded-md border-gray-800 w-full p-1"
+      type="text"
+      name="nume"
+    />
+  </div>
+  <div class="flex flex-col w-1/4">
+    <label for="prenume">Prenume*</label>
+    <input
+      class="border outline-none rounded-md border-gray-800 w-full p-1"
+      type="text"
+      name="prenume"
+    />
+  </div>
+  <div class="flex flex-col w-1/4">
+    <label for="telefon">Telefon*</label>
+    <input
+      class="border outline-none rounded-md border-gray-800 w-full p-1"
+      type="text"
+      name="telefon"
+    />
+  </div>
+  <div class="flex flex-col w-1/4">
+    <label for="email">Email*</label>
+    <input
+      class="border outline-none rounded-md border-gray-800 w-full p-1"
+      type="text"
+      name="email"
+    />
+  </div>
+  <div class="flex flex-col w-1/4">
+    <label for="password">Parola*</label>
+    <input
+      class="border outline-none rounded-md border-gray-800 w-full p-1"
+      type="password"
+      name="parola"
+    />
+  </div>
+  <div class="flex flex-col w-1/4">
+    <label for="agentie">Agentie</label>
+    <select
+      class="border outline-none rounded-md border-gray-800 w-full p-1"
+      name="agentie"
+    >
+      {% for agentie in agentii %}
+      <option class="bg-white">{{agentie}}</option>
+      {% endfor %}
+    </select>
+  </div>
+  <div class="flex flex-col w-1/4">
+    <button
+      type="submit"
+      class="border rounded-md w-full p-1 bg-red-800 text-white duration-300 hover:bg-red-700"
+    >
+      Creeaza cont
+    </button>
+  </div>
+  <div>
+    {% if appear == True %}
+    <p class="text-gray-800 text-base">
+      Te rugam sa completezi toate campurile marcate cu *
+    </p>
+    {% endif %}
+  </div>
+</form>
+{% endblock %}

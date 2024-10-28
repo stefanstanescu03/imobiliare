@@ -26,7 +26,7 @@ def login():
             result_password = result[0]
 
             if check_password_hash(result_password, password):
-                print("Logged in")
+                handleLogin(email)
             else:
                 incorrect_password = True
 
@@ -99,3 +99,31 @@ def handleCreateAccount(nume, prenume, telefon, email, parola, agentie):
 
     db.commit()
     cursor.close()
+
+
+def handleLogin(email):
+    sql = '''SELECT Utilizatori.Nume,
+                Utilizatori.Prenume,
+                Utilizatori.Telefon,
+                Utilizatori.Email,
+                Utilizatori.Data_nasterii,
+                Agentii.Nume
+            FROM Utilizatori
+                INNER JOIN Agentii ON Utilizatori.Email = %s
+                AND Utilizatori.AgentieID = Agentii.AgentieID;'''
+
+    cursor = db.cursor()
+    cursor.execute(sql, (email))
+    result = cursor.fetchone()
+    cursor.close()
+
+    utilizator = {
+        'Nume': result[0],
+        'Prenume': result[1],
+        'Telefon': result[2],
+        'Email': result[3],
+        'Data_nasterii': result[4],
+        'Agentie': result[5]
+    }
+
+    print(utilizator)

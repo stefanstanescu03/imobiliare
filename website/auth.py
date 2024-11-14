@@ -1,6 +1,9 @@
-from flask import Blueprint, render_template, request
+from flask import Blueprint, render_template, request, make_response, redirect, url_for
 from werkzeug.security import generate_password_hash, check_password_hash
 from . import db
+from .utils import getAgentieID, getAgentii
+from .utils import getToken
+
 
 auth = Blueprint('auth', __name__)
 
@@ -26,17 +29,34 @@ def login():
             result_password = result[0]
 
             if check_password_hash(result_password, password):
-                handleLogin(email)
+                token = getToken(email)
+                response = make_response(redirect(url_for('views.home')))
+                response.set_cookie(
+                    key="token",
+                    value=token,
+                    httponly=True,
+                    max_age=24 * 60 * 60,
+                    samesite="Strict"
+                )
+                return response
             else:
                 incorrect_password = True
 
-    return render_template('login.html', incorrect_password=incorrect_password, incorrect_email=incorrect_email)
+    return render_template('login.html', incorrect_password=incorrect_password, incorrect_email=incorrect_email, loggedIn=False)
+
+
+@auth.route('/logout', methods=['GET'])
+def logout():
+    response = make_response(redirect(url_for('auth.login')))
+    response.delete_cookie('token')
+    return response
 
 
 @auth.route('/signup', methods=['GET', 'POST'])
 def signup():
     agentii = getAgentii()
     appear = False
+    appearEmail = False
 
     if request.method == 'POST':
         nume = request.form.get('nume')
@@ -49,36 +69,23 @@ def signup():
         if nume == '' or prenume == '' or telefon == '' or email == '' or parola == '':
             appear = True
         else:
-            handleCreateAccount(nume, prenume, telefon, email, parola, agentie)
+            if checkEmail(email) is False:
+                appearEmail = True
+            else:
+                handleCreateAccount(nume, prenume, telefon,
+                                    email, parola, agentie)
 
-    return render_template('signup.html', agentii=agentii, nr_agentii=len(agentii), appear=appear)
+    return render_template('signup.html', agentii=agentii, nr_agentii=len(agentii), appear=appear,
+                           appearEmail=appearEmail, loggedIn=False)
 
 
-def getAgentieID(nume):
-    if nume == '---':
-        return None
-
+def checkEmail(email):
     cursor = db.cursor()
-    sql = "SELECT AgentieID FROM Agentii WHERE Nume = %s"
-    result = cursor.execute(sql, (nume))
-    result = cursor.fetchone()
-    cursor.close()
-
-    return result[0]
-
-
-def getAgentii():
-    cursor = db.cursor()
-    result = cursor.execute('SELECT Nume FROM Agentii')
+    sql = 'SELECT COUNT(*) FROM Utilizatori WHERE Email= %s'
+    result = cursor.execute(sql, (email))
     result = cursor.fetchall()
-
-    agentii = ['---']
-
-    for row in result:
-        agentii.append(row[0])
     cursor.close()
-
-    return agentii
+    return result[0][0] == 0
 
 
 def handleCreateAccount(nume, prenume, telefon, email, parola, agentie):
@@ -99,31 +106,3 @@ def handleCreateAccount(nume, prenume, telefon, email, parola, agentie):
 
     db.commit()
     cursor.close()
-
-
-def handleLogin(email):
-    sql = '''SELECT Utilizatori.Nume,
-                Utilizatori.Prenume,
-                Utilizatori.Telefon,
-                Utilizatori.Email,
-                Utilizatori.Data_nasterii,
-                Agentii.Nume
-            FROM Utilizatori
-                INNER JOIN Agentii ON Utilizatori.Email = %s
-                AND Utilizatori.AgentieID = Agentii.AgentieID;'''
-
-    cursor = db.cursor()
-    cursor.execute(sql, (email))
-    result = cursor.fetchone()
-    cursor.close()
-
-    utilizator = {
-        'Nume': result[0],
-        'Prenume': result[1],
-        'Telefon': result[2],
-        'Email': result[3],
-        'Data_nasterii': result[4],
-        'Agentie': result[5]
-    }
-
-    print(utilizator)

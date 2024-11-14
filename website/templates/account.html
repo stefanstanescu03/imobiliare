@@ -1,0 +1,58 @@
+{% extends 'base.html' %} {% block head %} {% endblock %} {% block body %}
+<form
+  method="POST"
+  class="flex flex-col w-full h-full text-gray-800 text-lg gap-3 py-12 items-center content-center"
+>
+  <div class="flex flex-col w-1/4">
+    <label for="nume">Nume:</label>
+    <input class="border outline-none rounded-md border-gray-800 w-full p-1"
+    type="text" name="nume" value="{{data["Nume"]}}" autocomplete="off" />
+  </div>
+  <div class="flex flex-col w-1/4">
+    <label for="prenume">Prenume:</label>
+    <input class="border outline-none rounded-md border-gray-800 w-full p-1"
+    type="text" name="prenume" value="{{data["Prenume"]}}" autocomplete="off" />
+  </div>
+  <div class="flex flex-col w-1/4">
+    <label for="telefon">Telefon:</label>
+    <input class="border outline-none rounded-md border-gray-800 w-full p-1"
+    type="text" name="telefon" value="{{data["Telefon"]}}" autocomplete="off" />
+  </div>
+  <div class="flex flex-col w-1/4">
+    <label for="email">Email:</label>
+    <input class="border outline-none rounded-md border-gray-800 w-full p-1"
+    type="text" name="email" value="{{data["Email"]}}" autocomplete="off" />
+  </div>
+  <div class="flex flex-col w-1/4">
+    <label for="data_nasterii">Data Nasterii:</label>
+    <input
+      class="border outline-none rounded-md border-gray-800 w-full p-1"
+      type="date"
+      name="data_nasterii"
+      value="{{date}}"
+      autocomplete="off"
+    />
+  </div>
+  <div class="flex flex-col w-1/4">
+    <label for="agentie">Agentie: </label>
+    <select
+      class="border outline-none rounded-md border-gray-800 w-full p-1"
+      name="agentie"
+    >
+      {% for agentie in agentii %} {% if agentie == data["Agentie"]%}
+      <option class="bg-white" selected="selected">{{agentie}}</option>
+      {% else %}
+      <option class="bg-white">{{agentie}}</option>
+      {% endif %} {% endfor %}
+    </select>
+  </div>
+  <div class="flex flex-col w-1/4">
+    <button
+      type="submit"
+      class="border rounded-md w-full p-1 bg-red-800 text-white duration-300 hover:bg-red-900"
+    >
+      Modifica datele
+    </button>
+  </div>
+</form>
+{% endblock %}

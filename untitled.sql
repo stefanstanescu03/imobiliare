@@ -1,3 +1,2 @@
-UPDATE Utilizatori
-SET Nume = "Alejandro"
-WHERE UtilizatorID = 31;
+delete from Utilizatori
+where Nume = 'test';

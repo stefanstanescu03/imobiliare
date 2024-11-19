@@ -30,7 +30,8 @@ def account():
         id = data["Id"]
 
         date = data["Data_nasterii"]
-        date = datetime.strptime(date, '"%Y-%m-%d"').strftime('%Y-%m-%d')
+        if date:
+            date = datetime.strptime(date, '"%Y-%m-%d"').strftime('%Y-%m-%d')
 
     if request.method == 'POST':
         nume = request.form.get('nume')

@@ -1,8 +1,7 @@
 from flask import Blueprint, render_template, request, make_response, redirect, url_for
 from werkzeug.security import generate_password_hash, check_password_hash
 from . import db
-from .utils import getAgentieID, getAgentii
-from .utils import getToken
+from .utils import getAgentieID, getAgentii, getToken, checkEmail
 
 
 auth = Blueprint('auth', __name__)
@@ -77,15 +76,6 @@ def signup():
 
     return render_template('signup.html', agentii=agentii, nr_agentii=len(agentii), appear=appear,
                            appearEmail=appearEmail, loggedIn=False)
-
-
-def checkEmail(email):
-    cursor = db.cursor()
-    sql = 'SELECT COUNT(*) FROM Utilizatori WHERE Email= %s'
-    result = cursor.execute(sql, (email))
-    result = cursor.fetchall()
-    cursor.close()
-    return result[0][0] == 0
 
 
 def handleCreateAccount(nume, prenume, telefon, email, parola, agentie):

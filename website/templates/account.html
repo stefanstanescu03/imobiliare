@@ -55,4 +55,46 @@
     </button>
   </div>
 </form>
+<div class="flex flex-col gap-2 px-20 items-center content-center">
+  <h1 class="font-bold text-xl">Programari</h1>
+  <div class="flex flex-col w-1/2">
+    {% for programare in programari %}
+    <div class="flex flex-row gap-10 items-center py-2 justify-between">
+      <h1>{{programare.data}}</h1>
+      <h1>{{programare.denumire}}</h1>
+      <button
+        type="submit"
+        class="border border-gray-800 rounded-md p-1 bg-white text-black duration-300 hover:bg-red-900 hover:text-white hover:border-white"
+      >
+        Anulare
+      </button>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+<div class="flex flex-col gap-2 px-20 items-center content-center">
+  <h1 class="font-bold text-xl">Contracte</h1>
+  <div class="flex flex-col w-1/2">
+    {% for contract in contracte %}
+    <div class="flex flex-row gap-10 items-center py-2 justify-between">
+      <h1>{{contract.data_semnarii}}</h1>
+      <div class="flex flex-row gap-2 items-center">
+        <h1>{{contract.data_incepere}}</h1>
+        <img
+          src="../static/right-arrow.png"
+          alt="arrow"
+          style="width: 15px; height: 15px"
+        />
+        <h1>{{contract.data_incheiere}}</h1>
+      </div>
+      <button
+        type="submit"
+        class="border border-gray-800 rounded-md p-1 bg-white text-black duration-300 hover:bg-red-900 hover:text-white hover:border-white"
+      >
+        Detalii
+      </button>
+    </div>
+    {% endfor %}
+  </div>
+</div>
 {% endblock %}

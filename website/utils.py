@@ -76,3 +76,49 @@ def checkEmail(email):
     result = cursor.fetchall()
     cursor.close()
     return result[0][0] == 0
+
+
+def getProgramari(email):
+    cursor = db.cursor()
+    sql = '''SELECT Programari.Data_programarii, Proprietati.Denumire
+            FROM Utilizatori
+                INNER JOIN Programari ON Programari.UtilizatorID = Utilizatori.UtilizatorID
+                INNER JOIN Proprietati ON Proprietati.ProprietateID = Programari.ProprietateID
+            WHERE Utilizatori.email = %s'''
+    result = cursor.execute(sql, (email))
+    result = cursor.fetchall()
+    cursor.close()
+
+    programari = []
+
+    for el in result:
+        programari.append({
+            'data': el[0],
+            'denumire': el[1]
+        })
+
+    return programari
+
+
+def getContracte(email):
+    cursor = db.cursor()
+    sql = '''SELECT Contracte.Data_incepere,
+                Contracte.Data_incheiere,
+                Contracte.Data_semnarii
+            FROM Contracte
+                INNER JOIN Utilizatori ON Utilizatori.UtilizatorID = Contracte.UtilizatorID
+            WHERE Utilizatori.email = %s'''
+    result = cursor.execute(sql, (email))
+    result = cursor.fetchall()
+    cursor.close
+
+    contracte = []
+
+    for el in result:
+        contracte.append({
+            'data_incepere': el[0],
+            'data_incheiere': el[1],
+            'data_semnarii': el[2]
+        })
+
+    return contracte

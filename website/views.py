@@ -3,7 +3,7 @@ import jwt
 import os
 from . import db
 from datetime import datetime, timedelta, timezone
-from .utils import getAgentieID, getAgentii
+from .utils import getAgentieID, getAgentii, getProgramari, getContracte
 
 views = Blueprint('views', __name__)
 
@@ -33,6 +33,10 @@ def account():
         if date:
             date = datetime.strptime(date, '"%Y-%m-%d"').strftime('%Y-%m-%d')
 
+        programari = getProgramari(data['Email'])
+        contracte = getContracte(data['Email'])
+        print(contracte)
+
     if request.method == 'POST':
         nume = request.form.get('nume')
         prenume = request.form.get('prenume')
@@ -45,7 +49,8 @@ def account():
         handleUpdate(id, nume, prenume, telefon,
                      email, data_nasterii, agentie_id)
 
-    return render_template("./account.html", data=data, agentii=agentii, date=date)
+    return render_template("./account.html", data=data, agentii=agentii,
+                           date=date, programari=programari, contracte=contracte)
 
 
 def handleUpdate(id, nume, prenume, telefon, email, data_nasterii, agentie_id):

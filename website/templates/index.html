@@ -1,2 +1,14 @@
-{% extends 'base.html' %} {% block head %} {% endblock %} {% block body %} {%
-endblock %}
+{% extends 'base.html' %} {% block head %} {% endblock %} {% block body %}
+<div class="flex flex-row justify-center">
+  <input
+    type="text"
+    placeholder="Locatie"
+    class="border outline-none rounded-l-md border-r-0 border-l-gray-800 border-t-gray-800 border-b-gray-800 w-1/2 p-2"
+  />
+  <button
+    class="border border-gray-800 outline-none rounded-r-md p-1 bg-red-800 text-white duration-300 hover:bg-red-900"
+  >
+    Cauta
+  </button>
+</div>
+{% endblock %}

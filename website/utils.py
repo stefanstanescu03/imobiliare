@@ -102,7 +102,8 @@ def getProgramari(email):
 
 def getContracte(email):
     cursor = db.cursor()
-    sql = '''SELECT Contracte.Data_incepere,
+    sql = '''SELECT Contracte.ContractID,
+                Contracte.Data_incepere,
                 Contracte.Data_incheiere,
                 Contracte.Data_semnarii
             FROM Contracte
@@ -116,9 +117,52 @@ def getContracte(email):
 
     for el in result:
         contracte.append({
-            'data_incepere': el[0],
-            'data_incheiere': el[1],
-            'data_semnarii': el[2]
+            'id': el[0],
+            'data_incepere': el[1],
+            'data_incheiere': el[2],
+            'data_semnarii': el[3]
         })
 
     return contracte
+
+
+def getInfo(id):
+    cursor = db.cursor()
+    sql = '''SELECT Contracte.ContractID,
+        Contracte.Pret,
+        Adrese.Judet,
+        Adrese.Oras,
+        Adrese.Scara,
+        Adrese.Sector,
+        Adrese.Strada,
+        TipOferte.Denumire,
+        Proprietati.Categorie,
+        Proprietati.Etaj,
+        Proprietati.Numar_adresa
+    FROM Contracte
+        INNER JOIN Proprietati ON Contracte.ProprietateID = Proprietati.ProprietateID
+        INNER JOIN Adrese ON Adrese.AdresaID = Proprietati.AdresaID
+        INNER JOIN TipOferte ON TipOferte.TipOfertaID = Contracte.TipOfertaID
+    WHERE ContractID = %s'''
+    result = cursor.execute(sql, (id))
+    result = cursor.fetchall()
+    cursor.close
+
+    info = []
+
+    for el in result:
+        info.append({
+            'id': el[0],
+            'pret': el[1],
+            'judet': el[2],
+            'oras': el[3],
+            'scara': el[4],
+            'sector': el[5],
+            'strada': el[6],
+            'oferta': el[7],
+            'categorie': el[8],
+            'etaj': el[9],
+            'numar_adresa': el[10]
+        })
+
+    return info

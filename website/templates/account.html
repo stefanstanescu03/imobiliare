@@ -1,4 +1,40 @@
-{% extends 'base.html' %} {% block head %} {% endblock %} {% block body %}
+{% extends 'base.html' %} {% block head %}
+<script>
+  async function handleGetInfo(id) {
+    try {
+      const response = await fetch(`/account/contract-info/${id}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ clicked: true }),
+      });
+      const result = await response.json();
+      const detailsDiv = document.getElementById(result[0].id);
+      detailsDiv.innerHTML = formatJSON(result[0]);
+      if (detailsDiv.style.display === "block") {
+        detailsDiv.style.display = "none";
+        return;
+      }
+      detailsDiv.style.display = "block";
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  }
+  function formatJSON(obj) {
+    let html = "<ul>";
+    for (const key in obj) {
+      if (typeof obj[key] === "object") {
+        html += `<li><strong>${key}:</strong>${formatJSON(obj[key])}</li>`;
+      } else {
+        html += `<li><strong>${key}:</strong> ${obj[key]}</li>`;
+      }
+    }
+    html += "</ul>";
+    return html;
+  }
+</script>
+{% endblock %} {% block body %}
 <form
   method="POST"
   class="flex flex-col w-full h-full text-gray-800 text-lg gap-3 py-12 items-center content-center"
@@ -90,10 +126,12 @@
       <button
         type="submit"
         class="border border-gray-800 rounded-md p-1 bg-white text-black duration-300 hover:bg-red-900 hover:text-white hover:border-white"
+        onclick="handleGetInfo('{{contract.id}}')"
       >
         Detalii
       </button>
     </div>
+    <div id="{{contract.id}}"></div>
     {% endfor %}
   </div>
 </div>

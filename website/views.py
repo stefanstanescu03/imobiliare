@@ -1,9 +1,10 @@
-from flask import Blueprint, render_template, request
+from flask import Blueprint, render_template, request, jsonify
 import jwt
 import os
 from . import db
 from datetime import datetime, timedelta, timezone
-from .utils import getAgentieID, getAgentii, getProgramari, getContracte
+from .utils import getAgentieID, getAgentii, getProgramari, getContracte, getInfo
+import json
 
 views = Blueprint('views', __name__)
 
@@ -35,7 +36,6 @@ def account():
 
         programari = getProgramari(data['Email'])
         contracte = getContracte(data['Email'])
-        print(contracte)
 
     if request.method == 'POST':
         nume = request.form.get('nume')
@@ -51,6 +51,13 @@ def account():
 
     return render_template("./account.html", data=data, agentii=agentii,
                            date=date, programari=programari, contracte=contracte)
+
+
+@views.route('/account/contract-info/<id>', methods=['POST'])
+def info(id):
+    infos = getInfo(id)
+    infos = jsonify(infos)
+    return infos
 
 
 def handleUpdate(id, nume, prenume, telefon, email, data_nasterii, agentie_id):

@@ -1,0 +1,309 @@
+{% extends 'base.html' %} {% block head %}
+<script>
+    const facilitatiSelectate = [];
+    function addFacilitate() {
+      const select = document.getElementById("facilitati");
+      const facilitate = select.value;
+      if (!facilitatiSelectate.includes(facilitate)) {
+        facilitatiSelectate.push(facilitate);
+        const ul = document.getElementById("facilitati-selectate");
+        const li = document.createElement("li");
+        li.textContent = facilitate;
+        ul.appendChild(li);
+
+        document.getElementById("facilitati-input").value = JSON.stringify(facilitatiSelectate);
+      }
+    }
+  </script>
+{% endblock %} {% block body %}
+<form
+  action=""
+  method="POST"
+  class="flex flex-col w-full h-full text-gray-800 text-lg gap-3 py-12 items-center content-center"
+>
+  <div class="flex flex-col w-1/4">
+    <label for="denumire">Denumire anunt:</label>
+    <input
+      class="border outline-none rounded-md border-gray-800 w-full p-1"
+      type="text"
+      name="denumire"
+      id="denumire"
+      autocomplete="off"
+    />
+  </div>
+
+  <div class="flex flex-row w-1/4 gap-4">
+    <div class="flex flex-col w-1/2">
+      <label for="tip_oferta">Tip oferta: </label>
+      <select
+        class="border outline-none rounded-md border-gray-800 w-full p-1"
+        name="tip_oferta"
+      >
+        {% for tip in tipOferte %}
+        <option class="bg-white">{{tip}}</option>
+        {% endfor %}
+      </select>
+    </div>
+
+    <div class="flex flex-col w-1/2">
+      <label for="pret">Pret(EUR):</label>
+      <input
+        class="border outline-none rounded-md border-gray-800 w-full p-1"
+        type="number"
+        name="pret"
+        id="pret"
+        autocomplete="off"
+      />
+    </div>
+  </div>
+
+  <div class="flex flex-row w-1/4 gap-4">
+    <div class="flex flex-col w-1/2">
+      <label for="data_semnarii">Data semnarii:</label>
+      <input
+        class="border outline-none rounded-md border-gray-800 w-full p-1"
+        type="date"
+        name="data_semnarii"
+        id="data_semnarii"
+        autocomplete="off"
+      />
+    </div>
+
+    <div class="flex flex-col w-1/2">
+      <label for="data_incheiere">Data incheiere:</label>
+      <input
+        class="border outline-none rounded-md border-gray-800 w-full p-1"
+        type="date"
+        name="data_incheiere"
+        id="data_incheiere"
+        autocomplete="off"
+      />
+    </div>
+  </div>
+
+  <div class="flex flex-col w-1/4">
+    <label for="data_incepere">Data incepere:</label>
+    <input
+      class="border outline-none rounded-md border-gray-800 w-full p-1"
+      type="date"
+      name="data_incepere"
+      id="data_incepere"
+      autocomplete="off"
+    />
+  </div>
+
+  <div class="flex flex-col w-1/4">
+    <label for="categorie">Categorie:</label>
+    <input
+      class="border outline-none rounded-md border-gray-800 w-full p-1"
+      type="text"
+      name="categorie"
+      id="categorie"
+      autocomplete="off"
+    />
+  </div>
+
+  <div class="flex flex-col w-1/4">
+    <label for="compartimentare">Compartimentare: </label>
+    <select
+      class="border outline-none rounded-md border-gray-800 w-full p-1"
+      name="compartimentare"
+      id="compartimentare"
+    >
+      <option class="bg-white">Decomandat</option>
+      <option class="bg-white">Semidecomandat</option>
+      <option class="bg-white">Circular</option>
+      <option class="bg-white">Nedecomandat</option>
+    </select>
+  </div>
+
+  <div class="flex flex-row w-1/4 gap-4">
+    <div class="flex flex-col w-1/2">
+      <label for="nr_camere">Numar camere:</label>
+      <input
+        class="border outline-none rounded-md border-gray-800 w-full p-1"
+        type="number"
+        name="nr_camere"
+        id="nr_camere"
+        autocomplete="off"
+      />
+    </div>
+
+    <div class="flex flex-col w-1/2">
+      <label for="nr_etaje">Numar etaje:</label>
+      <input
+        class="border outline-none rounded-md border-gray-800 w-full p-1"
+        type="number"
+        name="nr_etaje"
+        id="nr_etaje"
+        autocomplete="off"
+      />
+    </div>
+  </div>
+
+  <div class="flex flex-row w-1/4 gap-4">
+    <div class="flex flex-col w-1/2">
+      <label for="suprafata">Suprafata Utila(mp):</label>
+      <input
+        class="border outline-none rounded-md border-gray-800 w-full p-1"
+        type="number"
+        name="suprafata"
+        id="suprafata"
+        autocomplete="off"
+      />
+    </div>
+
+    <div class="flex flex-col w-1/2">
+      <label for="data">Data constructiei:</label>
+      <input
+        class="border outline-none rounded-md border-gray-800 w-full p-1"
+        type="date"
+        name="data"
+        id="data"
+        autocomplete="off"
+      />
+    </div>
+  </div>
+
+  <div class="flex flex-row w-1/4 gap-4">
+    <div class="flex flex-col w-1/2">
+      <label for="judet">Judet:</label>
+      <input
+        class="border outline-none rounded-md border-gray-800 w-full p-1"
+        type="text"
+        name="judet"
+        id="judet"
+        autocomplete="off"
+      />
+    </div>
+
+    <div class="flex flex-col w-1/2">
+      <label for="oras">Oras:</label>
+      <input
+        class="border outline-none rounded-md border-gray-800 w-full p-1"
+        type="text"
+        name="oras"
+        id="oras"
+        autocomplete="off"
+      />
+    </div>
+  </div>
+
+  <div class="flex flex-row w-1/4 gap-4">
+    <div class="flex flex-col w-1/2">
+      <label for="sector">Sector:</label>
+      <input
+        class="border outline-none rounded-md border-gray-800 w-full p-1"
+        type="number"
+        name="sector"
+        id="sector"
+        autocomplete="off"
+      />
+    </div>
+
+    <div class="flex flex-col w-1/2">
+      <label for="strada">Strada:</label>
+      <input
+        class="border outline-none rounded-md border-gray-800 w-full p-1"
+        type="text"
+        name="strada"
+        id="strada"
+        autocomplete="off"
+      />
+    </div>
+  </div>
+
+  <div class="flex flex-row w-1/4 gap-4">
+    <div class="flex flex-col w-1/2">
+      <label for="scara">Scara:</label>
+      <input
+        class="border outline-none rounded-md border-gray-800 w-full p-1"
+        type="text"
+        name="scara"
+        id="scara"
+        autocomplete="off"
+        maxlength="1"
+      />
+    </div>
+
+    <div class="flex flex-col w-1/2">
+      <label for="cod_postal">Cod Postal:</label>
+      <input
+        class="border outline-none rounded-md border-gray-800 w-full p-1"
+        type="text"
+        name="cod_postal"
+        id="cod_postal"
+        autocomplete="off"
+      />
+    </div>
+  </div>
+
+  <div class="flex flex-row w-1/4 gap-4">
+    <div class="flex flex-col w-1/2">
+      <label for="etaj">Etaj:</label>
+      <input
+        class="border outline-none rounded-md border-gray-800 w-full p-1"
+        type="number"
+        name="etaj"
+        id="etaj"
+        autocomplete="off"
+      />
+    </div>
+
+    <div class="flex flex-col w-1/2">
+      <label for="numar_adresa">Numar adresa:</label>
+      <input
+        class="border outline-none rounded-md border-gray-800 w-full p-1"
+        type="number"
+        name="numar_adresa"
+        id="numar_adresa"
+        autocomplete="off"
+      />
+    </div>
+  </div>
+
+  <div class="flex flex-col w-1/4">
+    <label for="descriere">Descriere:</label>
+    <textarea
+      class="border outline-none rounded-md border-gray-800 w-full p-1"
+      name="descriere"
+      id="descriere"
+      rows="4"
+    />
+    </textarea>
+  </div>
+
+  <div class="flex flex-col w-1/4">
+    <label for="facilitati">Facilități disponibile:</label>
+    <select id="facilitati" class="border outline-none rounded-md border-gray-800 w-full p-1">
+      {% for facilitate in facilitati %}
+      <option class="bg-white">{{facilitate}}</option>
+      {% endfor %}
+    </select>
+    <button
+      type="button"
+      class="border rounded-md w-full p-1 bg-red-800 text-white duration-300 hover:bg-red-900"
+      onclick="addFacilitate()"
+    >
+      Adaugă facilități
+    </button>
+  </div>
+
+  <div class="flex flex-col w-1/4">
+    <label for="facilitati-selectate">Facilități selectate:</label>
+    <ul id="facilitati-selectate" class="border p-2 rounded-md w-full"></ul>
+  </div>
+
+  <input type="hidden" name="facilitati" id="facilitati-input" />
+
+  <div class="flex flex-col w-1/4">
+    <button
+      type="submit"
+      class="border rounded-md w-full p-1 bg-red-800 text-white duration-300 hover:bg-red-900"
+    >
+      Publica anuntul
+    </button>
+  </div>
+
+</form>
+{% endblock %}

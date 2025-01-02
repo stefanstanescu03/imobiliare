@@ -32,6 +32,34 @@ def getAgentii():
     return agentii
 
 
+def getTipOferte():
+    cursor = db.cursor()
+    result = cursor.execute('SELECT Denumire FROM TipOferte')
+    result = cursor.fetchall()
+
+    tipuri = []
+
+    for row in result:
+        tipuri.append(row[0])
+    cursor.close()
+
+    return tipuri
+
+
+def getFacilitatidb():
+    cursor = db.cursor()
+    result = cursor.execute('SELECT Denumire FROM Facilitati')
+    result = cursor.fetchall()
+
+    facilitati = []
+
+    for row in result:
+        facilitati.append(row[0])
+    cursor.close()
+
+    return facilitati
+
+
 def getToken(email):
     sql1 = '''SELECT UtilizatorID, Nume, Prenume, Telefon, Email, Data_nasterii, AgentieID FROM Utilizatori
                 WHERE Email = %s'''
@@ -80,7 +108,7 @@ def checkEmail(email):
 
 def getProgramari(email):
     cursor = db.cursor()
-    sql = '''SELECT Programari.Data_programarii, Proprietati.Denumire
+    sql = '''SELECT Programari.Data_programarii, Proprietati.Denumire, Programari.ProgramareID
             FROM Utilizatori
                 INNER JOIN Programari ON Programari.UtilizatorID = Utilizatori.UtilizatorID
                 INNER JOIN Proprietati ON Proprietati.ProprietateID = Programari.ProprietateID
@@ -94,7 +122,8 @@ def getProgramari(email):
     for el in result:
         programari.append({
             'data': el[0],
-            'denumire': el[1]
+            'denumire': el[1],
+            'id': el[2]
         })
 
     return programari
@@ -111,7 +140,7 @@ def getContracte(email):
             WHERE Utilizatori.email = %s'''
     result = cursor.execute(sql, (email))
     result = cursor.fetchall()
-    cursor.close
+    cursor.close()
 
     contracte = []
 
@@ -146,7 +175,7 @@ def getInfo(id):
     WHERE ContractID = %s'''
     result = cursor.execute(sql, (id))
     result = cursor.fetchall()
-    cursor.close
+    cursor.close()
 
     info = []
 
@@ -166,3 +195,136 @@ def getInfo(id):
         })
 
     return info
+
+
+def getAnunturi(locatie):
+    cursor = db.cursor()
+    sql = '''SELECT Anunturi.AnuntID, Proprietati.Denumire, TipOferte.Denumire
+            FROM Proprietati
+            INNER JOIN Anunturi ON Proprietati.ProprietateID = Anunturi.ProprietateID
+            INNER JOIN TipOferte ON TipOferte.TipOfertaID = Anunturi.TipOfertaID
+            INNER JOIN Adrese ON Adrese.AdresaID = Proprietati.AdresaID
+            WHERE Adrese.Oras = %s'''
+    result = cursor.execute(sql, (locatie))
+    result = cursor.fetchall()
+    cursor.close
+
+    anunturi = []
+    for el in result:
+        anunturi.append({
+            'id': el[0],
+            'denumire': el[1],
+            'oferta': el[2]
+        })
+
+    return anunturi
+
+
+def getAnunt(id):
+    cursor = db.cursor()
+    sql = '''SELECT Anunturi.AnuntID,
+        TipOferte.Denumire,
+        Anunturi.Data_publicarii,
+        Anunturi.Pret,
+        Proprietati.Denumire,
+        Proprietati.Categorie,
+        Proprietati.Numar_adresa,
+        Proprietati.Compartimentare,
+        Proprietati.Numar_camere,
+        Proprietati.Numar_etaje,
+        Proprietati.Suprafata_utila,
+        Proprietati.Etaj,
+        Proprietati.Data_constructiei,
+        Proprietati.Descriere,
+        Adrese.Strada,
+        Adrese.Scara,
+        Adrese.Cod_postal,
+        Adrese.Oras,
+        Adrese.Judet,
+        Adrese.Sector,
+        Proprietati.ProprietateID
+        FROM Proprietati
+        INNER JOIN Anunturi ON Proprietati.ProprietateID = Anunturi.ProprietateID
+        INNER JOIN TipOferte ON TipOferte.TipOfertaID = Anunturi.TipOfertaID
+        INNER JOIN Adrese ON Adrese.AdresaID = Proprietati.AdresaID
+        WHERE Anunturi.AnuntID = %s'''
+    result = cursor.execute(sql, (id))
+    result = cursor.fetchall()
+    cursor.close()
+
+    anunt = {
+        'id': result[0][0],
+        'oferta': result[0][1],
+        'data_publicarii': result[0][2],
+        'pret (EUR)': result[0][3],
+        'denumire': result[0][4],
+        'categorie': result[0][5],
+        'numar_adresa': result[0][6],
+        'compartimentare': result[0][7],
+        'numar_camere': result[0][8],
+        'numar_etaje': result[0][9],
+        'suprafata_utila (mp)': result[0][10],
+        'etaj': result[0][11],
+        'data_constructiei': result[0][12],
+        'descriere': result[0][13],
+        'strada': result[0][14],
+        'scara': result[0][15],
+        'cod_postal': result[0][16],
+        'oras': result[0][17],
+        'judet': result[0][18],
+        'sector': result[0][19],
+        'proprietateId': result[0][20]
+    }
+    return anunt
+
+
+def getFacilitati(id):
+    cursor = db.cursor()
+    sql = '''SELECT Facilitati.Denumire
+            FROM Facilitati
+                INNER JOIN Detalii_suplimentare ON Detalii_suplimentare.FacilitateID = Facilitati.FacilitateID
+                INNER JOIN Proprietati ON Detalii_suplimentare.ProprietateID = Proprietati.ProprietateID
+                INNER JOIN Anunturi ON Anunturi.ProprietateID = Proprietati.ProprietateID
+            WHERE Anunturi.AnuntID = %s'''
+    result = cursor.execute(sql, (id))
+    result = cursor.fetchall()
+    cursor.close()
+
+    facilitati = []
+    for facilitate in result:
+        facilitati.append(facilitate[0])
+
+    return facilitati
+
+
+def getImagine(id):
+    cursor = db.cursor()
+    sql = '''SELECT Imagini.Path
+            FROM Imagini
+                INNER JOIN Proprietati ON Imagini.ProprietateID = Proprietati.ProprietateID
+                INNER JOIN Anunturi ON Anunturi.ProprietateID = Proprietati.ProprietateID
+            WHERE Anunturi.AnuntID = %s'''
+    result = cursor.execute(sql, (id))
+    result = cursor.fetchall()
+    cursor.close()
+    imagine = result[0][0]
+    return imagine
+
+
+def getTipOfertaId(Denumire):
+    cursor = db.cursor()
+    result = cursor.execute(
+        'SELECT TipOfertaID FROM TipOferte WHERE Denumire=%s', (Denumire))
+    result = cursor.fetchall()
+    cursor.close()
+    return result[0][0]
+
+
+def getFacilitateId(Denumire):
+    cursor = db.cursor()
+    result = cursor.execute(
+        'SELECT FacilitateID FROM Facilitati WHERE Denumire=%s', (Denumire))
+    result = cursor.fetchall()
+    cursor.close()
+
+    return result[0][0]

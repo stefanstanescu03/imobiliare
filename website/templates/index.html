@@ -1,14 +1,95 @@
 {% extends 'base.html' %} {% block head %} {% endblock %} {% block body %}
-<div class="flex flex-row justify-center">
+<script>
+  async function handleSearch() {
+    const inputElement = document.getElementById("search");
+    const locatie = inputElement.value;
+
+    try {
+      const response = await fetch(`search/${locatie}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ clicked: true }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to fetch data");
+      }
+
+      const data = await response.json();
+      createTable(data);
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  }
+
+  function createTable(data) {
+    const tableContainer = document.getElementById("table-container");
+
+    tableContainer.innerHTML = "";
+
+    const table = document.createElement("table");
+    table.className =
+      "border-collapse border border-gray-800 mx-auto overflow-hidden";
+
+    const headerRow = document.createElement("tr");
+    headerRow.className = "bg-red-800 text-white";
+
+    const headers = Object.keys(data[0]).filter(
+      (header) => header.toLowerCase() !== "id"
+    );
+
+    headers.forEach((header) => {
+      const th = document.createElement("th");
+      th.className = "border border-gray-800 p-2";
+      th.textContent = header;
+      headerRow.appendChild(th);
+    });
+    table.appendChild(headerRow);
+
+    data.forEach((row) => {
+      const tableRow = document.createElement("tr");
+      tableRow.className = "hover:bg-gray-200";
+
+      headers.forEach((header) => {
+        const td = document.createElement("td");
+        td.className = "border border-gray-800 p-2 text-center";
+
+        if (header.toLowerCase() === "denumire") {
+          const link = document.createElement("a");
+          link.href = `anunt/id=${row["id"]}`;
+          link.textContent = row[header];
+          link.className = "text-blue-600 hover:underline";
+          td.appendChild(link);
+        } else {
+          td.textContent = row[header];
+        }
+
+        tableRow.appendChild(td);
+      });
+
+      table.appendChild(tableRow);
+    });
+
+    tableContainer.appendChild(table);
+  }
+</script>
+
+<div class="flex flex-row justify-center mb-4">
   <input
     type="text"
     placeholder="Locatie"
     class="border outline-none rounded-l-md border-r-0 border-l-gray-800 border-t-gray-800 border-b-gray-800 w-1/2 p-2"
+    id="search"
   />
   <button
     class="border border-gray-800 outline-none rounded-r-md p-1 bg-red-800 text-white duration-300 hover:bg-red-900"
+    onclick="handleSearch()"
   >
     Cauta
   </button>
 </div>
+
+<div id="table-container" class="mt-4"></div>
 {% endblock %}

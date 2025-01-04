@@ -108,11 +108,21 @@ def checkEmail(email):
 
 def getProgramari(email):
     cursor = db.cursor()
-    sql = '''SELECT Programari.Data_programarii, Proprietati.Denumire, Programari.ProgramareID
-            FROM Utilizatori
-                INNER JOIN Programari ON Programari.UtilizatorID = Utilizatori.UtilizatorID
-                INNER JOIN Proprietati ON Proprietati.ProprietateID = Programari.ProprietateID
-            WHERE Utilizatori.email = %s'''
+    sql = '''SELECT Programari.Data_programarii,
+            Proprietati.Denumire,
+            Programari.ProgramareID,
+            Adrese.Strada,
+            Adrese.Scara,
+            Adrese.Oras,
+            Adrese.Judet,
+            Adrese.Sector,
+            Proprietati.Numar_adresa,
+            Proprietati.Etaj
+        FROM Utilizatori
+            INNER JOIN Programari ON Programari.UtilizatorID = Utilizatori.UtilizatorID
+            INNER JOIN Proprietati ON Proprietati.ProprietateID = Programari.ProprietateID
+            INNER JOIN Adrese ON Proprietati.AdresaID = Adrese.AdresaID
+        WHERE Utilizatori.email = %s;'''
     result = cursor.execute(sql, (email))
     result = cursor.fetchall()
     cursor.close()
@@ -123,7 +133,14 @@ def getProgramari(email):
         programari.append({
             'data': el[0],
             'denumire': el[1],
-            'id': el[2]
+            'id': el[2],
+            'strada': el[3],
+            'scara': el[4],
+            'oras': el[5],
+            'judet': el[6],
+            'sector': el[7],
+            'numar_adresa': el[8],
+            'etaj': el[9]
         })
 
     return programari
@@ -215,6 +232,27 @@ def getAnunturi(locatie):
             'id': el[0],
             'denumire': el[1],
             'oferta': el[2]
+        })
+
+    return anunturi
+
+
+def getAnunturiUtilizator(id):
+    cursor = db.cursor()
+    cursor.execute('''SELECT Anunturi.AnuntID,
+                    Proprietati.Denumire
+                    FROM Anunturi
+                        INNER JOIN Proprietati ON Anunturi.ProprietateID = Proprietati.ProprietateID
+                        INNER JOIN Utilizatori ON Utilizatori.UtilizatorID = Anunturi.UtilizatorID
+                    WHERE Utilizatori.UtilizatorID = %s''', (id))
+    result = cursor.fetchall()
+    cursor.close
+
+    anunturi = []
+    for el in result:
+        anunturi.append({
+            'id': el[0],
+            'denumire': el[1],
         })
 
     return anunturi
@@ -328,3 +366,98 @@ def getFacilitateId(Denumire):
     cursor.close()
 
     return result[0][0]
+
+
+def getProprietati(id):
+    cursor = db.cursor()
+    result = cursor.execute('''SELECT Proprietati.ProprietateID, Proprietati.Denumire
+                            FROM Proprietati
+                            INNER JOIN Contracte ON Contracte.ProprietateID = Proprietati.ProprietateID
+                            WHERE Contracte.UtilizatorID=%s''', (id))
+    result = cursor.fetchall()
+    cursor.close()
+
+    proprietati = []
+    for el in result:
+        proprietati.append({
+            'id': el[0],
+            'denumire': el[1]
+        })
+
+    return proprietati
+
+
+def getProprietateFromContract(id):
+    cursor = db.cursor()
+    cursor.execute(
+        '''SELECT ProprietateID FROM Contracte WHERE ContractID = %s''', (id))
+    result = cursor.fetchall()
+    cursor.close()
+    return result[0][0]
+
+
+def handleDeleteAnuntProprietate(id):
+    cursor = db.cursor()
+    cursor.execute('''DELETE FROM Anunturi WHERE ProprietateID = %s''', (id))
+    db.commit()
+    cursor.close()
+
+
+def handleDeleteImagine(id):
+    cursor = db.cursor()
+    cursor.execute('''DELETE FROM Imagini WHERE ProprietateID = %s''', (id))
+    db.commit()
+    cursor.close()
+
+
+def handleDeleteFacilitai(id):
+    cursor = db.cursor()
+    cursor.execute(
+        '''DELETE FROM Detalii_suplimentare WHERE ProprietateID = %s''', (id))
+    db.commit()
+    cursor.close()
+
+
+def handleDeleteContract(id):
+    cursor = db.cursor()
+    cursor.execute('''DELETE FROM Contracte WHERE ContractID = %s''', (id))
+    db.commit()
+    cursor.close()
+
+
+def handleDeleteProgramari(id):
+    cursor = db.cursor()
+    cursor.execute('''DELETE FROM Programari WHERE ProprietateID = %s''', (id))
+    db.commit()
+    cursor.close()
+
+
+def handleDeleteProprietate(id):
+    cursor = db.cursor()
+
+    cursor.execute('''SELECT COUNT(*)
+                    FROM Proprietati
+                    WHERE AdresaID = (
+                        SELECT AdresaID
+                        FROM Proprietati
+                        WHERE ProprietateID = %s
+                    );''', (id))
+
+    result = cursor.fetchall()
+    total = result[0][0]
+
+    cursor.execute(
+        '''SELECT AdresaID FROM Proprietati WHERE ProprietateID = %s''', (id))
+    result = cursor.fetchall()
+    adresa_id = result[0][0]
+
+    cursor.execute(
+        '''DELETE FROM Proprietati WHERE ProprietateID = %s''', (id))
+    db.commit()
+
+    if total == 1:
+        cursor.execute(
+            '''DELETE FROM Adrese WHERE AdresaID = %s''', (adresa_id))
+        db.commit()
+
+    cursor.close()

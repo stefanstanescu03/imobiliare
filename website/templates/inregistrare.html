@@ -22,7 +22,7 @@
   class="flex flex-col w-full h-full text-gray-800 text-lg gap-3 py-12 items-center content-center"
 >
   <div class="flex flex-col w-1/4">
-    <label for="denumire">Denumire anunt:</label>
+    <label for="denumire">Denumire:</label>
     <input
       class="border outline-none rounded-md border-gray-800 w-full p-1"
       type="text"
@@ -154,12 +154,12 @@
     </div>
 
     <div class="flex flex-col w-1/2">
-      <label for="data">Data constructiei:</label>
+      <label for="data_constructiei">Data constructiei:</label>
       <input
         class="border outline-none rounded-md border-gray-800 w-full p-1"
         type="date"
-        name="data"
-        id="data"
+        name="data_constructiei"
+        id="data_constructiei"
         autocomplete="off"
       />
     </div>
@@ -274,6 +274,18 @@
   </div>
 
   <div class="flex flex-col w-1/4">
+    <label for="imagine">Adauga imagine:</label>
+    <input
+        class="border outline-none rounded-md border-gray-800 w-full p-1"
+        type="file"
+        name="imagine"
+        id="imagine"
+        accept="image/png, image/jpeg"
+        autocomplete="off"
+      />
+  </div>
+
+  <div class="flex flex-col w-1/4">
     <label for="facilitati">Facilități disponibile:</label>
     <select id="facilitati" class="border outline-none rounded-md border-gray-800 w-full p-1">
       {% for facilitate in facilitati %}
@@ -301,7 +313,7 @@
       type="submit"
       class="border rounded-md w-full p-1 bg-red-800 text-white duration-300 hover:bg-red-900"
     >
-      Publica anuntul
+      Inregistreaza
     </button>
   </div>
 

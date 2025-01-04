@@ -1,0 +1,56 @@
+{% extends 'base.html' %} {% block head %} {% endblock %} {% block body %}
+<form
+  action=""
+  method="POST"
+  class="flex flex-col w-full h-full text-gray-800 text-lg gap-3 py-12 items-center content-center"
+>
+  <div class="flex flex-col w-1/4">
+    <label for="proprietate_id">Proprietate: </label>
+    <select
+      class="border outline-none rounded-md border-gray-800 w-full p-1"
+      name="proprietate_id"
+      id="proprietate_id"
+    >
+      {% for proprietate in proprietati %}
+      <option class="bg-white" value="{{proprietate.id}}">
+        {{proprietate.denumire}}
+      </option>
+      {% endfor %}
+    </select>
+  </div>
+
+  <div class="flex flex-row w-1/4 gap-4">
+    <div class="flex flex-col w-1/2">
+      <label for="tip_oferta">Tip oferta: </label>
+      <select
+        class="border outline-none rounded-md border-gray-800 w-full p-1"
+        name="tip_oferta"
+      >
+        {% for tip in tipOferte %}
+        <option class="bg-white">{{tip}}</option>
+        {% endfor %}
+      </select>
+    </div>
+
+    <div class="flex flex-col w-1/2">
+      <label for="pret">Pret(EUR):</label>
+      <input
+        class="border outline-none rounded-md border-gray-800 w-full p-1"
+        type="number"
+        name="pret"
+        id="pret"
+        autocomplete="off"
+      />
+    </div>
+  </div>
+
+  <div class="flex flex-col w-1/4">
+    <button
+      type="submit"
+      class="border rounded-md w-full p-1 bg-red-800 text-white duration-300 hover:bg-red-900"
+    >
+      Publica anuntul
+    </button>
+  </div>
+</form>
+{% endblock %}

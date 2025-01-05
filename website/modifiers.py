@@ -1,9 +1,6 @@
 from . import db
-from datetime import datetime, timedelta, timezone
+from datetime import datetime
 from .utils import *
-import jwt
-import json
-import os
 
 
 def handleUpdate(id, nume, prenume, telefon, email, data_nasterii, agentie_id):
@@ -157,5 +154,82 @@ def handleUpdateProgramare(id, data_programare, ora_programare):
 def handleDeleteAnunt(id):
     cursor = db.cursor()
     cursor.execute('''DELETE FROM Anunturi WHERE AnuntID = %s''', (id))
+    db.commit()
+    cursor.close()
+
+
+def modifyAdresa(strada, scara, cod_postal, oras, judet, sector, contract_id):
+    cursor = db.cursor()
+
+    cursor.execute('''SELECT COUNT(*)
+                    FROM Proprietati
+                    WHERE AdresaID = (
+                        SELECT Proprietati.AdresaID
+                        FROM Proprietati
+                            INNER JOIN Contracte ON Contracte.ProprietateID = Proprietati.ProprietateID
+                        WHERE Contracte.ContractID = %s
+                    );''',
+                   (contract_id))
+    result = cursor.fetchall()
+    if result[0][0] == 1:
+        cursor.execute('''UPDATE Adrese
+                        SET Strada = %s, Scara = %s, Cod_postal = %s, Oras = %s, Judet = %s, Sector = %s
+                        WHERE AdresaID = (
+                            SELECT Proprietati.AdresaID
+                            FROM Proprietati
+                                INNER JOIN Contracte ON Contracte.ProprietateID = Proprietati.ProprietateID
+                            WHERE Contracte.ContractID = %s
+                        )''', (strada, scara, cod_postal, oras, judet, sector, contract_id))
+        cursor.close()
+        db.commit()
+        return None
+    else:
+        new_id = handleAddAddresa(
+            strada, scara, cod_postal, oras, judet, sector)
+        cursor.close()
+        return new_id
+
+
+def modifyProprietate(denumire, categorie, numar_adresa, compartimentare, nr_camere, nr_etaje,
+                      suprafata, etaj, data_constructiei, descriere, contract_id, adresa_id):
+    cursor = db.cursor()
+
+    if adresa_id != None:
+        cursor.execute('''UPDATE Proprietati SET AdresaID = %s WHERE ProprietateID = (
+                            SELECT Contracte.ProprietateID FROM Contracte
+                            WHERE Contracte.ContractID = %s
+                            )''', (adresa_id, contract_id))
+
+    cursor.execute('''UPDATE Proprietati SET Denumire = %s, Categorie = %s, Numar_adresa = %s,
+                   Compartimentare = %s, Numar_camere = %s, Numar_etaje = %s, Suprafata_utila = %s,
+                   Etaj = %s, Data_constructiei = %s, Descriere = %s
+                   WHERE ProprietateID = (
+                            SELECT Contracte.ProprietateID FROM Contracte
+                            WHERE Contracte.ContractID = %s
+                            )''', (denumire, categorie, numar_adresa, compartimentare, nr_camere, nr_etaje,
+                                   suprafata, etaj, data_constructiei, descriere, contract_id))
+
+    db.commit()
+    cursor.close()
+
+
+def modifyContract(tip_oferta, data_semnarii, data_incepere, data_incheiere, pret, contract_id):
+    cursor = db.cursor()
+
+    cursor.execute('''UPDATE Contracte SET Data_semnarii = %s, Data_incheiere = %s, Data_incepere = %s,
+                   Pret = %s, TipOfertaID = (
+                        SELECT TipOfertaID FROM TipOferte WHERE Denumire = %s
+                   )
+                   WHERE ContractID = %s''', (data_semnarii, data_incheiere, data_incepere, pret, tip_oferta, contract_id))
+    db.commit()
+    cursor.close()
+
+
+def modifyImagine(imagine, contract_id):
+    cursor = db.cursor()
+    cursor.execute('''UPDATE Imagini SET Path = %s
+                   WHERE ProprietateID = (
+                        SELECT ProprietateID FROM Contracte WHERE ContractID = %s
+                   )''', (imagine, contract_id))
     db.commit()
     cursor.close()

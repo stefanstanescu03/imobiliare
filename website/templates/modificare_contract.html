@@ -1,21 +1,4 @@
-{% extends 'base.html' %} {% block head %}
-<script>
-    const facilitatiSelectate = [];
-    function addFacilitate() {
-      const select = document.getElementById("facilitati");
-      const facilitate = select.value;
-      if (!facilitatiSelectate.includes(facilitate)) {
-        facilitatiSelectate.push(facilitate);
-        const ul = document.getElementById("facilitati-selectate");
-        const li = document.createElement("li");
-        li.textContent = facilitate;
-        ul.appendChild(li);
-
-        document.getElementById("facilitati-input").value = JSON.stringify(facilitatiSelectate);
-      }
-    }
-  </script>
-{% endblock %} {% block body %}
+{% extends 'base.html' %} {% block head %} {% endblock %} {% block body %}
 <form
   action=""
   method="POST"
@@ -28,22 +11,30 @@
       type="text"
       name="denumire"
       id="denumire"
+      value="{{contract.denumire}}"
       autocomplete="off"
     />
   </div>
 
   <div class="flex flex-row w-1/4 gap-4">
     <div class="flex flex-col w-1/2">
-      <label for="tip_oferta">Tip oferta*: </label>
-      <select
-        class="border outline-none rounded-md border-gray-800 w-full p-1"
-        name="tip_oferta"
-      >
-        {% for tip in tipOferte %}
-        <option class="bg-white">{{tip}}</option>
-        {% endfor %}
-      </select>
-    </div>
+        <label for="tip_oferta">Tip oferta*: </label>
+        <select
+          class="border outline-none rounded-md border-gray-800 w-full p-1"
+          name="tip_oferta"
+          id="tip_oferta"
+        >
+          {% for tip in tipOferte %}
+          <option
+            class="bg-white"
+            value="{{ tip }}"
+            {% if tip == contract.oferta %}selected{% endif %}
+          >
+            {{ tip }}
+          </option>
+          {% endfor %}
+        </select>
+      </div>
 
     <div class="flex flex-col w-1/2">
       <label for="pret">Pret(EUR)*:</label>
@@ -52,6 +43,7 @@
         type="number"
         name="pret"
         id="pret"
+        value="{{contract.pret}}"
         autocomplete="off"
       />
     </div>
@@ -65,6 +57,7 @@
         type="date"
         name="data_semnarii"
         id="data_semnarii"
+        value="{{contract.data_semnarii}}"
         autocomplete="off"
       />
     </div>
@@ -76,6 +69,7 @@
         type="date"
         name="data_incheiere"
         id="data_incheiere"
+        value="{{contract.data_incheiere}}"
         autocomplete="off"
       />
     </div>
@@ -88,6 +82,7 @@
       type="date"
       name="data_incepere"
       id="data_incepere"
+      value="{{contract.data_incepere}}"
       autocomplete="off"
     />
   </div>
@@ -99,6 +94,7 @@
       type="text"
       name="categorie"
       id="categorie"
+      value="{{contract.categorie}}"
       autocomplete="off"
     />
   </div>
@@ -110,10 +106,22 @@
       name="compartimentare"
       id="compartimentare"
     >
-      <option class="bg-white">Decomandat</option>
-      <option class="bg-white">Semidecomandat</option>
-      <option class="bg-white">Circular</option>
-      <option class="bg-white">Nedecomandat</option>
+      <option value="Decomandat" class="bg-white"
+        {% if contract.compartimentare == "Decomandat" %}selected{% endif %}>
+        Decomandat
+      </option>
+      <option value="Semidecomandat" class="bg-white"
+        {% if contract.compartimentare == "Semidecomandat" %}selected{% endif %}>
+        Semidecomandat
+      </option>
+      <option value="Circular" class="bg-white"
+        {% if contract.compartimentare == "Circular" %}selected{% endif %}>
+        Circular
+      </option>
+      <option value="Nedecomandat" class="bg-white"
+        {% if contract.compartimentare == "Nedecomandat" %}selected{% endif %}>
+        Nedecomandat
+      </option>
     </select>
   </div>
 
@@ -125,6 +133,7 @@
         type="number"
         name="nr_camere"
         id="nr_camere"
+        value="{{contract.numar_camere}}"
         autocomplete="off"
       />
     </div>
@@ -136,6 +145,7 @@
         type="number"
         name="nr_etaje"
         id="nr_etaje"
+        value="{{contract.numar_etaje}}"
         autocomplete="off"
       />
     </div>
@@ -149,6 +159,7 @@
         type="number"
         name="suprafata"
         id="suprafata"
+        value="{{contract.suprafata}}"
         autocomplete="off"
       />
     </div>
@@ -160,6 +171,7 @@
         type="date"
         name="data_constructiei"
         id="data_constructiei"
+        value="{{contract.data_constructiei}}"
         autocomplete="off"
       />
     </div>
@@ -173,6 +185,7 @@
         type="text"
         name="judet"
         id="judet"
+        value="{{contract.judet}}"
         autocomplete="off"
       />
     </div>
@@ -184,6 +197,7 @@
         type="text"
         name="oras"
         id="oras"
+        value="{{contract.oras}}"
         autocomplete="off"
       />
     </div>
@@ -197,6 +211,7 @@
         type="number"
         name="sector"
         id="sector"
+        value="{{contract.sector}}"
         autocomplete="off"
       />
     </div>
@@ -208,6 +223,7 @@
         type="text"
         name="strada"
         id="strada"
+        value="{{contract.strada}}"
         autocomplete="off"
       />
     </div>
@@ -222,6 +238,7 @@
         name="scara"
         id="scara"
         autocomplete="off"
+        value="{{contract.scara}}"
         maxlength="1"
       />
     </div>
@@ -233,6 +250,7 @@
         type="text"
         name="cod_postal"
         id="cod_postal"
+        value="{{contract.cod_postal}}"
         autocomplete="off"
       />
     </div>
@@ -246,6 +264,7 @@
         type="number"
         name="etaj"
         id="etaj"
+        value="{{contract.etaj}}"
         autocomplete="off"
       />
     </div>
@@ -257,6 +276,7 @@
         type="number"
         name="numar_adresa"
         id="numar_adresa"
+        value="{{contract.numar_adresa}}"
         autocomplete="off"
       />
     </div>
@@ -269,11 +289,11 @@
       name="descriere"
       id="descriere"
       rows="4"
-    /></textarea>
+    />{{contract.descriere}}</textarea>
   </div>
 
   <div class="flex flex-col w-1/4">
-    <label for="imagine">Adauga imagine*:</label>
+    <label for="imagine">Adauga imagine:</label>
     <input
         class="border outline-none rounded-md border-gray-800 w-full p-1"
         type="file"
@@ -283,29 +303,6 @@
         autocomplete="off"
       />
   </div>
-
-  <div class="flex flex-col w-1/4">
-    <label for="facilitati">Facilități disponibile:</label>
-    <select id="facilitati" class="border outline-none rounded-md border-gray-800 w-full p-1">
-      {% for facilitate in facilitati %}
-      <option class="bg-white">{{facilitate}}</option>
-      {% endfor %}
-    </select>
-    <button
-      type="button"
-      class="border rounded-md w-full p-1 bg-red-800 text-white duration-300 hover:bg-red-900"
-      onclick="addFacilitate()"
-    >
-      Adaugă facilități
-    </button>
-  </div>
-
-  <div class="flex flex-col w-1/4">
-    <label for="facilitati-selectate">Facilități selectate:</label>
-    <ul id="facilitati-selectate" class="border p-2 rounded-md w-full"></ul>
-  </div>
-
-  <input type="hidden" name="facilitati" id="facilitati-input" />
 
   <div class="flex flex-col w-1/4">
     <button

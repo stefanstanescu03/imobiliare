@@ -1,2 +1,2 @@
-DELETE FROM Adrese
-WHERE AdresaID = 12;
+delete from Adrese
+where AdresaID = 24;

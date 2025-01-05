@@ -24,6 +24,29 @@
     }
   }
 
+  async function handleFilter() {
+    const inputElement = document.getElementById("search");
+    const locatie = inputElement.value;
+    try {
+      const response = await fetch(`get-cheap/${locatie}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ clicked: true }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to fetch data");
+      }
+
+      const data = await response.json();
+      createTable(data);
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  }
+
   function createTable(data) {
     const tableContainer = document.getElementById("table-container");
 
@@ -90,6 +113,10 @@
     Cauta
   </button>
 </div>
-
+<div class="flex items-center justify-center" id="filtru">
+  <button class="hover:underline" onclick="handleFilter()">
+    Sub pretul mediu
+  </button>
+</div>
 <div id="table-container" class="mt-4"></div>
 {% endblock %}

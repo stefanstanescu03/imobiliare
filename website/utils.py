@@ -172,6 +172,65 @@ def getContracte(email):
     return contracte
 
 
+def getContract(id):
+    cursor = db.cursor()
+    sql = '''SELECT Proprietati.Denumire,
+            TipOferte.Denumire,
+            Contracte.Pret,
+            Contracte.Data_semnarii,
+            Contracte.Data_incheiere,
+            Contracte.Data_incepere,
+            Proprietati.Categorie,
+            Proprietati.Compartimentare,
+            Proprietati.Numar_camere,
+            Proprietati.Numar_etaje,
+            Proprietati.Suprafata_utila,
+            Proprietati.Data_constructiei,
+            Adrese.Judet,
+            Adrese.Oras,
+            Adrese.Sector,
+            Adrese.Strada,
+            Adrese.Scara,
+            Adrese.Cod_postal,
+            Proprietati.Etaj,
+            Proprietati.Numar_adresa,
+            Proprietati.Descriere
+        FROM Contracte
+            INNER JOIN Proprietati ON Proprietati.ProprietateID = Contracte.ProprietateID
+            INNER JOIN TipOferte ON TipOferte.TipOfertaID = Contracte.TipOfertaID
+            INNER JOIN Adrese ON Adrese.AdresaID = Proprietati.AdresaID
+        WHERE Contracte.ContractID = %s'''
+    result = cursor.execute(sql, (id))
+    result = cursor.fetchall()
+    cursor.close()
+
+    contract = {
+        'denumire': result[0][0],
+        'oferta': result[0][1],
+        'pret': result[0][2],
+        'data_semnarii': result[0][3],
+        'data_incheiere': result[0][4],
+        'data_incepere': result[0][5],
+        'categorie': result[0][6],
+        'compartimentare': result[0][7],
+        'numar_camere': result[0][8],
+        'numar_etaje': result[0][9],
+        'suprafata': result[0][10],
+        'data_constructiei': result[0][11],
+        'judet': result[0][12],
+        'oras': result[0][13],
+        'sector': result[0][14],
+        'strada': result[0][15],
+        'scara': result[0][16],
+        'cod_postal': result[0][17],
+        'etaj': result[0][18],
+        'numar_adresa': result[0][19],
+        'descriere': result[0][20],
+    }
+
+    return contract
+
+
 def getInfo(id):
     cursor = db.cursor()
     sql = '''SELECT Contracte.ContractID,
@@ -225,6 +284,37 @@ def getAnunturi(locatie):
     result = cursor.execute(sql, (locatie))
     result = cursor.fetchall()
     cursor.close
+
+    anunturi = []
+    for el in result:
+        anunturi.append({
+            'id': el[0],
+            'denumire': el[1],
+            'oferta': el[2]
+        })
+
+    return anunturi
+
+
+def getAnunturiIeftine(locatie):
+    cursor = db.cursor()
+    sql = '''SELECT anunt.AnuntID, Proprietati.Denumire, TipOferte.Denumire
+        FROM Proprietati
+            INNER JOIN Anunturi anunt ON Proprietati.ProprietateID = anunt.ProprietateID
+            INNER JOIN TipOferte ON TipOferte.TipOfertaID = anunt.TipOfertaID
+            INNER JOIN Adrese ON Adrese.AdresaID = Proprietati.AdresaID
+        WHERE Pret <= (
+            SELECT AVG(Anunturi.Pret)
+            FROM Anunturi
+                INNER JOIN Proprietati ON Proprietati.ProprietateID = Anunturi.ProprietateID
+                INNER JOIN Adrese ON Proprietati.AdresaID = Adrese.AdresaID
+            WHERE Adrese.Oras = %s
+                AND Anunturi.TipOfertaID = anunt.TipOfertaID
+            )
+        AND Adrese.Oras = %s'''
+    result = cursor.execute(sql, (locatie, locatie))
+    result = cursor.fetchall()
+    cursor.close()
 
     anunturi = []
     for el in result:
